@@ -2,7 +2,7 @@
 
 Ce document est un **guide autonome** pour avancer sur ton projet final **en parallèle du cours**. Il ne remplace pas les séances : il te donne une méthode, des garde-fous et des pistes techniques quand tu es bloqué avant d’avoir vu toutes les notions (BDD, API, Docker, etc.).
 
-> **Référence technique d’exemple** : le dépôt contient le projet **[film-library](../../film-library/)** (PHP, base de données, API JSON, front statique). Tu peux t’en inspirer pour la structure, pas pour copier-coller sans comprendre.
+> **Référence technique d’exemple** : le dépôt contient le projet **[film-library](./film-library/)** (PHP, base de données, API JSON, front statique). Tu peux t’en inspirer pour la structure, pas pour copier-coller sans comprendre.
 
 ---
 
@@ -308,8 +308,8 @@ Docker permet d’avoir les **mêmes versions** de PHP et de SGBD pour tout le m
 
 Fichiers de référence dans ce dépôt :
 
-- `[film-library/docker-compose.yml](../../film-library/docker-compose.yml)` — services, ports, variables, volume BDD
-- `[film-library/backend/Dockerfile](../../film-library/backend/Dockerfile)` — image PHP et extensions (ex. PDO)
+- [film-library/docker-compose.yml](./film-library/docker-compose.yml) — services, ports, variables, volume BDD
+- [film-library/backend/Dockerfile](./film-library/backend/Dockerfile) — image PHP et extensions (ex. PDO)
 
 Commandes typiques :
 
@@ -347,11 +347,11 @@ Un fichier texte (non versionné) qui contient des paires `CLE=valeur` : mot de 
 
 ### Exemple dans ce dépôt
 
-- `[film-library/.env.example](../../film-library/.env.example)` — modèle des variables attendues
+- [film-library/.env.example](./film-library/.env.example) — modèle des variables attendues
 
 ### Comment PHP les lit
 
-Dans un projet simple, soit le **système** (Docker) injecte les variables, soit un petit script charge le fichier `.env` dans `$_ENV`. Exemple de logique : `[film-library/backend/includes/config.php](../../film-library/backend/includes/config.php)` (lecture de `.env` à la racine du projet + complément avec `getenv()`).
+Dans un projet simple, soit le **système** (Docker) injecte les variables, soit un petit script charge le fichier `.env` dans `$_ENV`. Exemple de logique : [film-library/backend/includes/config.php](./film-library/backend/includes/config.php) (lecture de `.env` à la racine du projet + complément avec `getenv()`).
 
 ### Bonnes habitudes
 
@@ -385,7 +385,7 @@ Avant d’écrire du SQL, réponds par écrit (même sur papier) aux questions s
 
 ### Exemple de référence (à comparer, pas à recopier aveuglément)
 
-Le fichier `[film-library/backend/sql/schema.sql](../../film-library/backend/sql/schema.sql)` montre :
+Le fichier [film-library/backend/sql/schema.sql](./film-library/backend/sql/schema.sql) montre :
 
 - une table `**users`** ;
 - une table métier `**films`** liée à `users` ;
@@ -422,9 +422,9 @@ flowchart LR
 
 Fichiers d’illustration dans `film-library` :
 
-- Connexion PDO : `[backend/includes/db.php](../../film-library/backend/includes/db.php)`
-- En-têtes JSON + aide : `[backend/public/api/api-init.php](../../film-library/backend/public/api/api-init.php)`
-- Client `fetch` avec cookies de session : `[frontend/js/api.js](../../film-library/frontend/js/api.js)`
+- Connexion PDO : `[backend/includes/db.php](./film-library/backend/includes/db.php)`
+- En-têtes JSON + aide : `[backend/public/api/api-init.php](./film-library/backend/public/api/api-init.php)`
+- Client `fetch` avec cookies de session : `[frontend/js/api.js](./film-library/frontend/js/api.js)`
 
 **Attention** : si ton front et ton back ne sont **pas** sur le même origine (protocole + domaine + port), les cookies et le CORS deviennent vite pénibles. Pour le module, un setup **même serveur / même port** (comme servir le front et `/api` au même endroit) simplifie énormément la démo.
 
@@ -453,7 +453,7 @@ Tu n’as pas besoin de 20 pages : **quelques flux complets et stables** suffise
 - URLs **ressources** claires : ex. `/api/films`, `/api/films/42`
 - **Codes HTTP** : 200 OK, 201 créé, 400 mauvaise requête, 401 non authentifié, 404 introuvable, 500 erreur serveur
 - Corps **JSON** avec `Content-Type: application/json`
-- Liste des endpoints dans ton **README du projet** (comme dans `[film-library/README.md](../../film-library/README.md)`)
+- Liste des endpoints dans ton **README du projet** (comme dans [film-library/README.md](./film-library/README.md))
 
 ---
 
