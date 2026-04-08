@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Library - Film</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100">
+  <nav class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between">
+    <a href="dashboard.html" class="text-xl font-bold text-amber-400">← Film Library</a>
+    <a href="profile.html" class="text-slate-300 hover:text-white">Profile</a>
+  </nav>
+
+  <main class="p-4 max-w-4xl mx-auto" id="content">
+    <p id="loading" class="text-slate-400">Loading...</p>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    async function loadFilm() {
+      const params = new URLSearchParams(location.search);
+      const id = params.get('id');
+      if (!id) {
+        document.getElementById('content').innerHTML = '<p class="text-red-400">Invalid film</p>';
+        return;
+      }
+
+      const res = await api.get('/api/films/film.php?id=' + id);
+      if (!res.ok) {
+        document.getElementById('content').innerHTML = '<p class="text-red-400">Film not found</p>';
+        return;
+      }
+
+      const f = await res.json();
+      document.getElementById('loading').remove();
+
+      const html = `
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="flex-shrink-0">
+            ${f.poster_url
+              ? `<img src="${f.poster_url}" alt="" class="rounded-lg w-full max-w-xs shadow-lg">`
+              : '<div class="w-64 h-96 bg-slate-700 rounded-lg flex items-center justify-center text-6xl">🎬</div>'}
+          </div>
+          <div class="flex-1">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h1 class="text-2xl font-bold">${escapeHtml(f.title)}</h1>
+                <p class="text-slate-400">${f.year || ''} ${f.genre ? ' · ' + f.genre : ''}</p>
+              </div>
+              <button id="fav-btn" class="p-2 rounded-full bg-slate-700 hover:bg-amber-500 transition text-2xl"
+                data-fav="${f.is_favorite}">
+                ${f.is_favorite ? '❤️' : '🤍'}
+              </button>
+            </div>
+
+            ${f.plot ? `<p class="mt-4 text-slate-300">${escapeHtml(f.plot)}</p>` : ''}
+
+            <div class="mt-6 space-y-3">
+              <div>
+                <label class="block text-sm text-slate-400 mb-1">Status</label>
+                <select id="status" class="px-3 py-2 rounded bg-slate-800 border border-slate-600 text-white">
+                  <option value="to_watch" ${f.status === 'to_watch' ? 'selected' : ''}>To watch</option>
+                  <option value="seen" ${f.status === 'seen' ? 'selected' : ''}>Seen</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm text-slate-400 mb-1">Rating (0-10)</label>
+                <input type="number" id="rating" min="0" max="10" value="${f.rating ?? ''}" placeholder="Not rated"
+                  class="px-3 py-2 rounded bg-slate-800 border border-slate-600 text-white w-20">
+              </div>
+              <button id="save-btn" class="px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold">
+                Save
+              </button>
+            </div>
+
+            <div class="mt-8">
+              <h2 class="font-semibold mb-2">Comments</h2>
+              <div id="comments" class="space-y-2 mb-4">
+                ${(f.comments || []).map(c => `
+                  <div class="bg-slate-800 rounded p-3">
+                    <div class="text-sm text-slate-400">${escapeHtml(c.display_name || 'Anonymous')} · ${new Date(c.created_at).toLocaleDateString()}</div>
+                    <div>${escapeHtml(c.content)}</div>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="flex gap-2">
+                <input type="text" id="new-comment" placeholder="Add a comment..."
+                  class="flex-1 px-3 py-2 rounded bg-slate-800 border border-slate-600 text-white placeholder-slate-500">
+                <button id="add-comment" class="px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('content').innerHTML = html;
+
+      document.getElementById('save-btn').addEventListener('click', async () => {
+        const res = await api.put('/api/films/film.php?id=' + id, {
+          status: document.getElementById('status').value,
+          rating: document.getElementById('rating').value ? parseInt(document.getElementById('rating').value) : null
+        });
+        if (res.ok) {
+          const film = await res.json();
+          document.getElementById('status').value = film.status;
+          document.getElementById('rating').value = film.rating ?? '';
+        }
+      });
+
+      document.getElementById('fav-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('fav-btn');
+        const isFav = btn.dataset.fav === 'true';
+        const res = isFav ? await api.delete('/api/favorites/index.php', { film_id: parseInt(id) }) : await api.post('/api/favorites/index.php', { film_id: parseInt(id) });
+        if (res.ok) {
+          btn.dataset.fav = !isFav;
+          btn.textContent = !isFav ? '❤️' : '🤍';
+        }
+      });
+
+      document.getElementById('add-comment').addEventListener('click', async () => {
+        const input = document.getElementById('new-comment');
+        const content = input.value.trim();
+        if (!content) return;
+        const res = await api.put('/api/films/film.php?id=' + id, { comment: content });
+        if (res.ok) {
+          const film = await res.json();
+          if (film && film.comments && film.comments.length) {
+            const last = film.comments[film.comments.length - 1];
+            document.getElementById('comments').insertAdjacentHTML('beforeend', `
+              <div class="bg-slate-800 rounded p-3">
+                <div class="text-sm text-slate-400">${escapeHtml(last.display_name || 'You')} · ${new Date(last.created_at).toLocaleDateString()}</div>
+                <div>${escapeHtml(last.content)}</div>
+              </div>
+            `);
+          }
+          input.value = '';
+        }
+      });
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    checkAuth().then(user => {
+      if (!user) return;
+      loadFilm();
+    });
+  </script>
+</body>
+</html>

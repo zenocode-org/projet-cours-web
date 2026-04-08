@@ -1,0 +1,37 @@
+services:
+  php:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./frontend:/var/www/html/frontend
+    environment:
+      DB_HOST: postgres
+      DB_NAME: ${DB_NAME:-film_library}
+      DB_USER: ${DB_USER:-film_user}
+      DB_PASSWORD: ${DB_PASSWORD:-film_pass}
+      OMDB_API_KEY: ${OMDB_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-film_library}
+      POSTGRES_USER: ${DB_USER:-film_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-film_pass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-film_user} -d ${DB_NAME:-film_library}"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

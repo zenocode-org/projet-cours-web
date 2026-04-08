@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Library - My Collection</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100">
+  <nav class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+    <a href="dashboard.html" class="text-xl font-bold text-amber-400">Film Library</a>
+    <div class="flex items-center gap-4">
+      <a href="profile.html" class="text-slate-300 hover:text-white">Profile</a>
+      <button id="logout-btn" class="text-slate-300 hover:text-white">Logout</button>
+    </div>
+  </nav>
+
+  <main class="p-4 max-w-7xl mx-auto">
+    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+      <div class="relative flex-1">
+        <input type="text" id="search-input" placeholder="Search OMDB for movies..."
+          class="w-full px-4 py-2 pl-10 rounded bg-slate-800 border border-slate-600 text-white placeholder-slate-500 focus:border-amber-500 outline-none">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">🔍</span>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        <select id="status-filter" class="px-4 py-2 rounded bg-slate-800 border border-slate-600 text-white">
+          <option value="">All</option>
+          <option value="to_watch">To watch</option>
+          <option value="seen">Seen</option>
+        </select>
+        <label class="flex items-center gap-2 px-4 py-2 rounded bg-slate-800 border border-slate-600 cursor-pointer">
+          <input type="checkbox" id="favorites-filter" class="rounded">
+          <span>Favorites only</span>
+        </label>
+        <button type="button" id="add-manual-btn" class="px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold">
+          Add manually
+        </button>
+      </div>
+    </div>
+
+    <div id="manual-form" class="mb-6 hidden bg-slate-800 rounded-lg p-4 border border-slate-700">
+      <h3 class="font-semibold mb-3">Add film manually</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <input type="text" id="manual-title" placeholder="Title *" required class="px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white">
+        <input type="text" id="manual-year" placeholder="Year" class="px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white">
+        <input type="text" id="manual-poster" placeholder="Poster URL" class="px-3 py-2 rounded bg-slate-700 border border-slate-600 text-white">
+        <button type="button" id="manual-submit" class="px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold">Add</button>
+      </div>
+    </div>
+
+    <div id="search-results" class="mb-6 hidden"></div>
+
+    <div id="films-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <p id="loading" class="col-span-full text-slate-400">Loading...</p>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/films.js"></script>
+  <script>
+    checkAuth().then(user => {
+      if (!user) return;
+      films.init();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await api.post('/api/auth/logout.php');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
