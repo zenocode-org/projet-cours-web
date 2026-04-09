@@ -122,7 +122,7 @@ Quand une étape bloque, descends d’un cran : par ex. une API qui ne fait que 
 
 **Conseils pour réussir**
 
-- Utilise `**addEventListener`** plutôt que des attributs `onclick` partout : plus facile à maintenir.
+- Utilise **`addEventListener`** plutôt que des attributs `onclick` partout : plus facile à maintenir.
 - Vérifie dans la **console** du navigateur (`F12`) : une erreur JS peut bloquer tout le script.
 - Simule des **données factices** en JavaScript (tableau d’objets en dur) pour tester listes et filtres **avant** la BDD.
 - Prépare des **fonctions réutilisables** du type « rendre une carte » ou « vider un conteneur » : tu les réutiliseras quand les données viendront de l’API.
@@ -131,14 +131,14 @@ Quand une étape bloque, descends d’un cran : par ex. une API qui ne fait que 
 
 **Ce qui est attendu**
 
-- Des `**<form>`** (ou champs contrôlés par JS) pour créer ou modifier des ressources.
+- Des **`<form>`** (ou champs contrôlés par JS) pour créer ou modifier des ressources.
 - Des **labels** associés aux champs (`for` / `id`), des types adaptés (`email`, `number`, `date`…).
 - Une **validation utilisateur** avant envoi : champs obligatoires, formats plausibles, messages clairs (sans remplacer la validation serveur plus tard).
 
 **Conseils pour réussir**
 
 - Distingue **validation UX** (vite, côté navigateur) et **validation sécurité** (indispensable côté PHP, étape suivante).
-- Pour l’instant tu peux intercepter l’envoi avec `**preventDefault()`** et afficher un résumé en JSON dans la console : tu prépares le contrat de données.
+- Pour l’instant tu peux intercepter l’envoi avec **`preventDefault()`** et afficher un résumé en JSON dans la console : tu prépares le contrat de données.
 - Pense au **parcours erreur** : bordure rouge, message sous le champ, focus sur le premier problème.
 - Si ton projet utilisera du JSON vers PHP, garde la même **forme d’objet** que tu enverras plus tard avec `fetch`.
 
@@ -148,7 +148,7 @@ Quand une étape bloque, descends d’un cran : par ex. une API qui ne fait que 
 
 - Une **liste d’entités** et leurs attributs, puis des **tables** avec types et contraintes de base.
 - Les **relations** explicites : clés étrangères, cardinalités (1—N, N—N avec table de liaison si besoin).
-- Un fichier `**schema.sql`** (ou équivalent) versionné, qui permet de recréer la structure sur une machine vierge.
+- Un fichier **`schema.sql`** (ou équivalent) versionné, qui permet de recréer la structure sur une machine vierge.
 
 **Conseils pour réussir**
 
@@ -193,11 +193,11 @@ Quand une étape bloque, descends d’un cran : par ex. une API qui ne fait que 
 
 - Au moins **un endpoint REST** conforme au module : méthode HTTP claire, réponse en **JSON** (`Content-Type: application/json`).
 - Des réponses structurées : par ex. `{ "data": [...] }` ou `{ "error": "..." }` — l’important est d’être **régulier** et documenté.
-- Côté front, des appels `**fetch`** qui consomment ce JSON et mettent à jour l’interface (en branchant ce que tu as fait aux étapes 1–2).
+- Côté front, des appels **`fetch`** qui consomment ce JSON et mettent à jour l’interface (en branchant ce que tu as fait aux étapes 1–2).
 
 **Conseils pour réussir**
 
-- Commence par un `**GET`** qui lit en base ; ajoute `**POST`** ensuite. Les verbes `PUT`/`DELETE` peuvent suivre la même logique que ton CRUD.
+- Commence par un **`GET`** qui lit en base ; ajoute **`POST`** ensuite. Les verbes `PUT`/`DELETE` peuvent suivre la même logique que ton CRUD.
 - Utilise des **codes HTTP** significatifs (400, 401, 404, 500) — ça te fera gagner du temps au débogage.
 - Documente dans ton **README projet** : URL, méthode, corps attendu, exemple de réponse.
 - Débugue avec l’onglet **Réseau** : vérifie l’URL, le statut, le corps brut de la réponse.
@@ -213,8 +213,8 @@ Quand une étape bloque, descends d’un cran : par ex. une API qui ne fait que 
 **Conseils pour réussir**
 
 - N’ajoute l’auth qu’une fois le **CRUD + API** compris sur un périmètre simple ; sinon tu mélanges trop de sources d’erreurs.
-- Factorise une fonction du type `**requireAuth()`** appelée en tête des scripts sensibles.
-- Pour `fetch` avec session : `**credentials: 'include'`** et idéalement **même origine** que l’API (voir la section **Récupérer et afficher les données** plus bas).
+- Factorise une fonction du type **`requireAuth()`** appelée en tête des scripts sensibles.
+- Pour `fetch` avec session : **`credentials: 'include'`** et idéalement **même origine** que l’API (voir la section **Récupérer et afficher les données** plus bas).
 - Prévois un scénario de **démo** : compte test, mot de passe, ou réinitialisation simple.
 
 ### Étape 9 — Finitions, tests manuels, README projet, démo
@@ -304,7 +304,7 @@ Docker permet d’avoir les **mêmes versions** de PHP et de SGBD pour tout le m
 
 - un service **PHP** (souvent Apache intégré) exposé sur un port (ex. `8080`) ;
 - un service **PostgreSQL** ou MySQL avec un **volume** pour les données ;
-- un fichier `**schema.sql`** monté dans le dossier d’initialisation du conteneur DB pour créer les tables au **premier** démarrage.
+- un fichier **`schema.sql`** monté dans le dossier d’initialisation du conteneur DB pour créer les tables au **premier** démarrage.
 
 Fichiers de référence dans ce dépôt :
 
@@ -343,7 +343,7 @@ Utile si Docker n’est pas encore maîtrisé : garde la même idée (PHP qui pa
 
 Un fichier texte (non versionné) qui contient des paires `CLE=valeur` : mot de passe base de données, nom de la base, parfois une **clé API** externe.
 
-- **Ne commite jamais** `.env` sur Git : ajoute-le au `.gitignore`. Versionne plutôt un `**.env.example`** sans secrets réels.
+- **Ne commite jamais** `.env` sur Git : ajoute-le au `.gitignore`. Versionne plutôt un **`.env.example`** sans secrets réels.
 
 ### Exemple dans ce dépôt
 
@@ -355,7 +355,7 @@ Dans un projet simple, soit le **système** (Docker) injecte les variables, soit
 
 ### Bonnes habitudes
 
-- Après modification de `.env` sous Docker, souvent `**docker compose up -d --build`** ou redémarrage des services pour être sûr que les variables sont prises en compte.
+- Après modification de `.env` sous Docker, souvent **`docker compose up -d --build`** ou redémarrage des services pour être sûr que les variables sont prises en compte.
 - **Un seul endroit** pour la config : évite de dupliquer mots de passe en dur dans 10 fichiers PHP.
 
 ---
@@ -387,11 +387,11 @@ Avant d’écrire du SQL, réponds par écrit (même sur papier) aux questions s
 
 Le fichier [film-library/backend/sql/schema.sql](./film-library/backend/sql/schema.sql) montre :
 
-- une table `**users`** ;
-- une table métier `**films`** liée à `users` ;
-- une table de liaison `**film_favorites**` (relation utilisateur ↔ film) ;
-- une table `**film_comments**` ;
-- des `**INDEX**` sur les clés étrangères / requêtes fréquentes.
+- une table **`users`** ;
+- une table métier **`films`** liée à `users` ;
+- une table de liaison **`film_favorites**` (relation utilisateur ↔ film) ;
+- une table **`film_comments**` ;
+- des **`INDEX**` sur les clés étrangères / requêtes fréquentes.
 
 ### Premières requêtes à savoir articuler
 
