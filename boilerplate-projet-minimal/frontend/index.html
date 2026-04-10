@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gabarit projet — accueil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900">
+    <header class="border-b border-slate-200 bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-6">
+        <h1 class="text-2xl font-semibold tracking-tight">Gabarit minimal</h1>
+        <p class="mt-1 text-sm text-slate-600">
+          Front statique (HTML, CSS, JS) et API sous <code class="rounded bg-slate-100 px-1">/api/</code>.
+        </p>
+      </div>
+    </header>
+    <main class="mx-auto max-w-3xl px-4 py-8">
+      <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-medium">Test API</h2>
+        <p class="mt-2 text-sm text-slate-600">
+          Clic sur le bouton : requête <code class="rounded bg-slate-100 px-1">GET /api/healthcheck</code>.
+        </p>
+        <button
+          type="button"
+          id="btn-health"
+          class="mt-4 rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+        >
+          Appeler /api/healthcheck
+        </button>
+        <pre
+          id="out"
+          class="mt-4 hidden rounded-md bg-slate-900 p-4 text-sm text-emerald-300"
+        ></pre>
+      </section>
+    </main>
+    <script src="js/app.js"></script>
+  </body>
+</html>

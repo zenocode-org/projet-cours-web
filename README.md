@@ -3,6 +3,8 @@
 Ce document est un **guide autonome** pour avancer sur ton projet final **en parallèle du cours**. Il ne remplace pas les séances : il te donne une méthode, des garde-fous et des pistes techniques quand tu es bloqué avant d’avoir vu toutes les notions (BDD, API, Docker, etc.).
 
 > **Référence technique d’exemple** : le dépôt contient le projet **[film-library](./film-library/)** (PHP, base de données, API JSON, front statique). Tu peux t’en inspirer pour la structure, pas pour copier-coller sans comprendre.
+>
+> **Gabarit minimal** : le dossier **[gabarit-projet-minimal](./gabarit-projet-minimal/)** propose un squelette encore plus léger (front + `GET /api/healthcheck` et `/api/fake`, Docker, PostgreSQL, Adminer). Son **README** détaille comment le `schema.sql` est exécuté au **premier** démarrage et comment **réinitialiser la base** avec `docker compose down -v` — sujets souvent peu visibles dans les grandes lignes de ce guide.
 
 ---
 
@@ -310,6 +312,7 @@ Fichiers de référence dans ce dépôt :
 
 - [film-library/docker-compose.yml](./film-library/docker-compose.yml) — services, ports, variables, volume BDD
 - [film-library/backend/Dockerfile](./film-library/backend/Dockerfile) — image PHP et extensions (ex. PDO)
+- [gabarit-projet-minimal/README.md](./gabarit-projet-minimal/README.md) — explication pas à pas du montage `schema.sql` dans `/docker-entrypoint-initdb.d/` et de la commande `docker compose down -v` pour tout réinitialiser
 
 Commandes typiques :
 
