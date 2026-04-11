@@ -30,7 +30,7 @@ Si ton enseignant ou un tutoriel insiste sur phpMyAdmin, tu peux plus tard adapt
 Prérequis : **Docker** et **Docker Compose** installés.
 
 ```bash
-cd gabarit-projet-minimal
+cd boilerplate-projet-minimal
 cp .env.example .env
 # Édite .env si tu veux changer nom d’utilisateur / mot de passe / base
 docker compose up -d --build
@@ -73,7 +73,7 @@ C’est pour cela que beaucoup de débutants croient que « le SQL ne marche pas
 Si tu veux **tout réinitialiser** (tu perds les données en base) :
 
 ```bash
-cd gabarit-projet-minimal
+cd boilerplate-projet-minimal
 docker compose down -v
 ```
 
@@ -92,7 +92,7 @@ docker compose up -d --build
 ## Structure des dossiers (résumé)
 
 ```
-gabarit-projet-minimal/
+boilerplate-projet-minimal/
 ├── docker-compose.yml
 ├── .env.example
 ├── README.md
