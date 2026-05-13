@@ -17,7 +17,18 @@ Ce dossier est un **point de départ** pour ton projet du module : structure lé
 | `database/init.sql` | **Seul** script d’init versionné : schéma minimal — à remplacer par ton modèle ; monté dans le conteneur MySQL (`/docker-entrypoint-initdb.d/`). |
 | `backend/Dockerfile` | Image PHP 8.2 + Apache + extensions **PDO MySQL**. |
 | `backend/apache.conf` | Racine web = front ; API servie sous `/api/`. |
+| `backend/public/api/openapi.json` | Spécification **OpenAPI 3** utilisée par Swagger UI (chemins, méthodes, schémas). |
+| `backend/public/api/docs.php` | Page **Swagger UI** ; URL canonique sans `.php` : `/api/docs` (voir `.htaccess`). |
 | `docker-compose.yml` | Services **php**, **db** (MySQL 8), **phpmyadmin** (interface web pour la BDD). |
+
+### Documentation API (Swagger / OpenAPI)
+
+Le gabarit inclut **Swagger UI** pour explorer et tester l’API documentée.
+
+- **Interface Swagger** (navigateur) : avec le compose d’exemple sur le port 8080, ouvre [http://localhost:8080/api/docs](http://localhost:8080/api/docs).
+- **Fichier de spécification** (JSON) : [http://localhost:8080/api/openapi.json](http://localhost:8080/api/openapi.json) — c’est la source lue par Swagger UI.
+
+**Important :** la documentation **n’est pas générée automatiquement** à partir du PHP. Dès que tu **ajoutes une route**, que tu **changes une URL**, un verbe HTTP, un corps JSON ou un code de réponse, tu dois **mettre à jour `backend/public/api/openapi.json`** pour que Swagger reste exact : sinon l’interface affichera encore l’ancienne description et les tests « Try it out » ne refléteront pas ton API réelle.
 
 ### phpMyAdmin
 
@@ -39,6 +50,7 @@ docker compose up -d --build
 Ensuite :
 
 - **Site** : [http://localhost:8080](http://localhost:8080) (page d’accueil + bouton de test `fetch`).
+- **Documentation Swagger** : [http://localhost:8080/api/docs](http://localhost:8080/api/docs) (voir la section *Documentation API* plus haut : maintenir `openapi.json` quand l’API évolue).
 - **API** :
   - [http://localhost:8080/api/healthcheck](http://localhost:8080/api/healthcheck) et [http://localhost:8080/api/fake](http://localhost:8080/api/fake) — `GET`, réponse `{}`.
   - **POST** [http://localhost:8080/api/exemples](http://localhost:8080/api/exemples) — insertion d’une ligne dans la table `exemple`. Corps JSON `{"libelle":"…"}` (`libelle` optionnel, max 255 caractères). Réponses : **201** `{"id", "libelle"}` ; **400** JSON invalide ou `libelle` trop long ; **405** si ce n’est pas `POST` ; **500** erreur SQL.
@@ -111,8 +123,10 @@ boilerplate-projet-minimal/
 │   ├── apache.conf
 │   ├── public/
 │   │   └── api/
-│   │       ├── .htaccess      # URLs sans .php : healthcheck, fake, exemples
+│   │       ├── .htaccess      # URLs sans .php : healthcheck, fake, exemples, docs
 │   │       ├── db.php
+│   │       ├── openapi.json   # spec OpenAPI (à tenir à jour quand tu ajoutes des routes)
+│   │       ├── docs.php       # Swagger UI → /api/docs
 │   │       ├── healthcheck.php
 │   │       ├── fake.php
 │   │       └── exemples.php
@@ -122,7 +136,7 @@ boilerplate-projet-minimal/
     └── js/app.js
 ```
 
-Les routes `/api/healthcheck`, `/api/fake` et `/api/exemples` sont réécrites vers les fichiers PHP par **mod_rewrite** (`.htaccess`).
+Les routes `/api/healthcheck`, `/api/fake`, `/api/exemples` et `/api/docs` sont réécrites vers les fichiers PHP par **mod_rewrite** (`.htaccess`). Le fichier **`openapi.json`** est servi tel quel pour Swagger.
 
 ---
 

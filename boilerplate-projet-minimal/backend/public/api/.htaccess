@@ -2,3 +2,4 @@ RewriteEngine On
 RewriteRule ^healthcheck/?$ healthcheck.php [L]
 RewriteRule ^fake/?$ fake.php [L]
 RewriteRule ^exemples/?$ exemples.php [L]
+RewriteRule ^docs/?$ docs.php [L]

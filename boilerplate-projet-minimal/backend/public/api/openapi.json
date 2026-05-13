@@ -1,0 +1,156 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API gabarit minimal",
+    "description": "Documentation OpenAPI du boilerplate (healthcheck, fake, exemples).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Serveur local (docker-compose : port 8080)"
+    }
+  ],
+  "paths": {
+    "/api/healthcheck": {
+      "get": {
+        "summary": "Vérification de disponibilité",
+        "operationId": "getHealthcheck",
+        "responses": {
+          "200": {
+            "description": "Service joignable",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmptyObject" },
+                "example": {}
+              }
+            }
+          },
+          "405": {
+            "description": "Méthode non autorisée",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorMessage" },
+                "example": { "error": "Méthode non autorisée" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fake": {
+      "get": {
+        "summary": "Endpoint factice",
+        "operationId": "getFake",
+        "responses": {
+          "200": {
+            "description": "Réponse vide",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmptyObject" },
+                "example": {}
+              }
+            }
+          },
+          "405": {
+            "description": "Méthode non autorisée",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorMessage" },
+                "example": { "error": "Méthode non autorisée" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exemples": {
+      "post": {
+        "summary": "Créer une entrée dans la table exemple",
+        "operationId": "postExemple",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "libelle": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "description": "Texte optionnel (max 255 caractères)"
+                  }
+                }
+              },
+              "examples": {
+                "avecLibelle": {
+                  "value": { "libelle": "Ma première ligne" }
+                },
+                "vide": {
+                  "value": {}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ligne créée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["id", "libelle"],
+                  "properties": {
+                    "id": { "type": "integer", "format": "int64" },
+                    "libelle": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON invalide ou libelle trop long",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorMessage" }
+              }
+            }
+          },
+          "405": {
+            "description": "Méthode non autorisée",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorMessage" }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur base de données",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorMessage" },
+                "example": { "error": "Erreur base de données" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EmptyObject": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ErrorMessage": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": { "type": "string" }
+        }
+      }
+    }
+  }
+}
