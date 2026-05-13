@@ -1,6 +1,6 @@
 # Gabarit minimal de projet (PHP + front statique + Docker)
 
-Ce dossier est un **point de départ** pour ton projet du module : structure légère, deux routes API factices, base **MySQL 8**, Apache en conteneur, et une page HTML avec **Tailwind** (via CDN). Tu peux le **dupliquer** ou t’en inspirer pour créer ton propre dépôt.
+Ce dossier est un **point de départ** pour ton projet du module : structure légère, **une route API** qui écrit en base (`POST /api/exemples`), **deux routes factices** (`GET /api/healthcheck`, `GET /api/fake`), base **MySQL 8**, Apache en conteneur, et une page HTML avec **Tailwind** (via CDN). Tu peux le **dupliquer** ou t’en inspirer pour créer ton propre dépôt.
 
 > **Ce que le [guide officiel](../README.md) ne détaille pas toujours** : *comment* le fichier SQL est exécuté automatiquement au premier lancement, et *comment repartir de zéro* si la base est dans un état incohérent. C’est décrit plus bas — lis cette section avant de te demander pourquoi ton `init.sql` « ne s’applique pas ».
 
@@ -11,7 +11,9 @@ Ce dossier est un **point de départ** pour ton projet du module : structure lé
 | Élément | Rôle |
 |--------|------|
 | `frontend/` | HTML, CSS, JS (vanilla). Tailwind chargé par CDN dans `index.html`. |
-| `backend/public/api/` | API PHP : `GET /api/healthcheck` et `GET /api/fake` → réponse `{}` (JSON vide). |
+| `backend/public/api/` | API PHP : `POST /api/exemples` (insert dans la table `exemple`) ; `GET /api/healthcheck` et `GET /api/fake` → `{}`. |
+| `backend/public/api/db.php` | Connexion **PDO MySQL** partagée (`DB_*` du conteneur). |
+| `backend/public/api/exemples.php` | Handler **POST** : corps JSON `{"libelle": "..."}` (optionnel, max 255 car.) → **201** `{"id", "libelle"}`. |
 | `database/init.sql` | Schéma **minimal** (ou amorçage de tables) — à remplacer par ton modèle ; exécuté au premier démarrage du conteneur MySQL. |
 | `backend/Dockerfile` | Image PHP 8.2 + Apache + extensions **PDO MySQL**. |
 | `backend/apache.conf` | Racine web = front ; API servie sous `/api/`. |
@@ -37,7 +39,18 @@ docker compose up -d --build
 Ensuite :
 
 - **Site** : [http://localhost:8080](http://localhost:8080) (page d’accueil + bouton de test `fetch`).
-- **API** : [http://localhost:8080/api/healthcheck](http://localhost:8080/api/healthcheck) et [http://localhost:8080/api/fake](http://localhost:8080/api/fake) (toutes deux en `GET`, corps JSON `{}`).
+- **API** :
+  - [http://localhost:8080/api/healthcheck](http://localhost:8080/api/healthcheck) et [http://localhost:8080/api/fake](http://localhost:8080/api/fake) — `GET`, réponse `{}`.
+  - **POST** [http://localhost:8080/api/exemples](http://localhost:8080/api/exemples) — insertion d’une ligne dans la table `exemple`. Corps JSON `{"libelle":"…"}` (`libelle` optionnel, max 255 caractères). Réponses : **201** `{"id", "libelle"}` ; **400** JSON invalide ou `libelle` trop long ; **405** si ce n’est pas `POST` ; **500** erreur SQL.
+
+  Après le tout premier `docker compose up`, attends quelques secondes que MySQL ait fini d’exécuter `init.sql` avant le premier `POST`.
+
+  ```bash
+  curl -X POST http://localhost:8080/api/exemples \
+    -H 'Content-Type: application/json' \
+    -d '{"libelle":"Ma première ligne"}'
+  ```
+
 - **phpMyAdmin** : [http://localhost:8081](http://localhost:8081) — hôte **db**, port **3306**, identifiants cohérents avec `docker-compose.yml` (root / mot de passe root dans l’exemple fourni).
 
 Arrêter les conteneurs :
@@ -98,9 +111,11 @@ boilerplate-projet-minimal/
 │   ├── apache.conf
 │   ├── public/
 │   │   └── api/
-│   │       ├── .htaccess      # URLs sans .php pour healthcheck / fake
+│   │       ├── .htaccess      # URLs sans .php : healthcheck, fake, exemples
+│   │       ├── db.php
 │   │       ├── healthcheck.php
-│   │       └── fake.php
+│   │       ├── fake.php
+│   │       └── exemples.php
 │   └── sql/
 │       └── schema.sql         # optionnel / historique ; l’init officiel du compose est database/init.sql
 └── frontend/
@@ -109,15 +124,15 @@ boilerplate-projet-minimal/
     └── js/app.js
 ```
 
-Les routes `/api/healthcheck` et `/api/fake` sont réécrites vers les fichiers PHP par **mod_rewrite** (`.htaccess`).
+Les routes `/api/healthcheck`, `/api/fake` et `/api/exemples` sont réécrites vers les fichiers PHP par **mod_rewrite** (`.htaccess`).
 
 ---
 
 ## Prochaines étapes pour ton vrai projet
 
 1. Adapter le contenu de **`database/init.sql`** avec la syntaxe **MySQL** (types, auto-incrément, etc.) et utiliser `down` + suppression de `db-data` une fois si besoin pour repartir propre.
-2. Ajouter en PHP une couche **PDO** (connexion via variables d’environnement `DB_*` déjà passées par Compose au service `php`).
-3. Enrichir le front (pages, `fetch` vers tes vrais endpoints).
+2. Étendre l’API et la couche **PDO** (autres verbes HTTP, lectures, règles métier) en réutilisant **`db.php`** ou une couche dédiée.
+3. Enrichir le front (pages, `fetch` vers tes vrais endpoints, y compris `POST /api/exemples`).
 4. Versionner avec **Git** ; ne pas commiter `.env`.
 
 Pour la méthodologie (checklist, évaluation, sécurité), reste sur le **[guide principal](../README.md)** et sur l’exemple plus complet **[film-library](../film-library/)**.
