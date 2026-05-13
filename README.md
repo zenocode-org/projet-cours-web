@@ -1,5 +1,5 @@
 > [!NOTE]
-> **Gabarit de démarrage pour le projet** — Un modèle minimal (front HTML/CSS/JS avec Tailwind, PHP, API de test, Docker, PostgreSQL, Adminer) est disponible dans **[boilerplate-projet-minimal](./boilerplate-projet-minimal/)**. Ouvre son **README** pour les commandes d’installation et les explications sur la base de données.
+> **Gabarit de démarrage pour le projet** — Un modèle minimal (front HTML/CSS/JS avec Tailwind, PHP, API de test incluant **`POST /api/exemples`**, Docker, **MySQL** et **phpMyAdmin**) est disponible dans **[boilerplate-projet-minimal](./boilerplate-projet-minimal/)**. Ouvre son **README** pour les commandes d’installation et le rôle de **`database/init.sql`**.
 
 # Guide d’accompagnement — projet final (IM4DDW)
 
@@ -7,7 +7,7 @@ Ce document est un **guide autonome** pour avancer sur ton projet final **en par
 
 > **Référence technique d’exemple** : le dépôt contient le projet **[film-library](./film-library/)** (PHP, base de données, API JSON, front statique). Tu peux t’en inspirer pour la structure, pas pour copier-coller sans comprendre.
 >
-> **Gabarit minimal** : le dossier **[boilerplate-projet-minimal](./boilerplate-projet-minimal/)** propose un squelette encore plus léger (front + `GET /api/healthcheck` et `/api/fake`, Docker, PostgreSQL, Adminer). Son **README** détaille comment le `schema.sql` est exécuté au **premier** démarrage et comment **réinitialiser la base** avec `docker compose down -v` — sujets souvent peu visibles dans les grandes lignes de ce guide.
+> **Gabarit minimal** : le dossier **[boilerplate-projet-minimal](./boilerplate-projet-minimal/)** propose un squelette encore plus léger (front + **`GET /api/healthcheck`** et **`/api/fake`**, **`POST /api/exemples`**, Docker, **MySQL**, **phpMyAdmin**). Son **README** détaille comment **`database/init.sql`** est exécuté au **premier** démarrage et comment **réinitialiser la base** en supprimant le dossier **`db-data/`** — sujets souvent peu visibles dans les grandes lignes de ce guide.
 
 ---
 
@@ -315,7 +315,7 @@ Fichiers de référence dans ce dépôt :
 
 - [film-library/docker-compose.yml](./film-library/docker-compose.yml) — services, ports, variables, volume BDD
 - [film-library/backend/Dockerfile](./film-library/backend/Dockerfile) — image PHP et extensions (ex. PDO)
-- [boilerplate-projet-minimal/README.md](./boilerplate-projet-minimal/README.md) — explication pas à pas du montage `schema.sql` dans `/docker-entrypoint-initdb.d/` et de la commande `docker compose down -v` pour tout réinitialiser
+- [boilerplate-projet-minimal/README.md](./boilerplate-projet-minimal/README.md) — montage de **`database/init.sql`** dans `/docker-entrypoint-initdb.d/` et réinitialisation via le dossier **`db-data/`** (voir le README du gabarit)
 
 Commandes typiques :
 
@@ -337,7 +337,7 @@ Utile si Docker n’est pas encore maîtrisé : garde la même idée (PHP qui pa
 
 ### Pièges fréquents avec Docker + BDD
 
-1. **Le script `schema.sql` ne se réexécute pas** à chaque `docker compose up` : il tourne surtout lors de la **création du volume** la première fois. Si tu modifies le schéma après coup, il faudra soit une migration manuelle, soit recréer le volume (souvent `docker compose down -v` — **perte des données**).
+1. **Le script d’init SQL** (souvent `schema.sql`, `init.sql`, etc.) **ne se réexécute pas** à chaque `docker compose up` : il tourne surtout lors de la **création du volume** la première fois. Si tu modifies le schéma après coup, il faudra soit une migration manuelle, soit recréer le stockage des données (ex. **`docker compose down -v`** avec un volume nommé — **perte des données** — ou, dans **boilerplate-projet-minimal**, supprimer le dossier **`db-data/`** après `docker compose down`).
 2. **Port déjà utilisé** : change le mapping `8080:80` dans `docker-compose.yml` ou libère le port.
 3. **Le service PHP démarre avant que la DB soit prête** : Compose peut utiliser `depends_on` + **healthcheck** sur la base (comme dans `film-library`).
 

@@ -14,7 +14,7 @@ Ce dossier est un **point de départ** pour ton projet du module : structure lé
 | `backend/public/api/` | API PHP : `POST /api/exemples` (insert dans la table `exemple`) ; `GET /api/healthcheck` et `GET /api/fake` → `{}`. |
 | `backend/public/api/db.php` | Connexion **PDO MySQL** partagée (`DB_*` du conteneur). |
 | `backend/public/api/exemples.php` | Handler **POST** : corps JSON `{"libelle": "..."}` (optionnel, max 255 car.) → **201** `{"id", "libelle"}`. |
-| `database/init.sql` | Schéma **minimal** (ou amorçage de tables) — à remplacer par ton modèle ; exécuté au premier démarrage du conteneur MySQL. |
+| `database/init.sql` | **Seul** script d’init versionné : schéma minimal — à remplacer par ton modèle ; monté dans le conteneur MySQL (`/docker-entrypoint-initdb.d/`). |
 | `backend/Dockerfile` | Image PHP 8.2 + Apache + extensions **PDO MySQL**. |
 | `backend/apache.conf` | Racine web = front ; API servie sous `/api/`. |
 | `docker-compose.yml` | Services **php**, **db** (MySQL 8), **phpmyadmin** (interface web pour la BDD). |
@@ -105,7 +105,7 @@ boilerplate-projet-minimal/
 ├── README.md
 ├── database/
 │   └── init.sql
-├── db-data/                 # créé au premier run (données MySQL), à ignorer par Git si tu l’ajoutes
+├── db-data/                 # créé au premier run (données MySQL), listé dans `.gitignore`
 ├── backend/
 │   ├── Dockerfile
 │   ├── apache.conf
@@ -116,8 +116,6 @@ boilerplate-projet-minimal/
 │   │       ├── healthcheck.php
 │   │       ├── fake.php
 │   │       └── exemples.php
-│   └── sql/
-│       └── schema.sql         # optionnel / historique ; l’init officiel du compose est database/init.sql
 └── frontend/
     ├── index.html
     ├── css/styles.css
